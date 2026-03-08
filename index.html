@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Chaos Engineering Lab</title>
+
+<style>
+body{
+margin:0;
+background:black;
+color:#00ff41;
+font-family:monospace;
+overflow:hidden;
+}
+
+canvas{
+position:fixed;
+top:0;
+left:0;
+}
+
+.container{
+position:relative;
+z-index:2;
+width:700px;
+margin:120px auto;
+border:2px solid #00ff41;
+padding:30px;
+background:rgba(0,0,0,0.85);
+box-shadow:0 0 20px #00ff41;
+}
+
+button{
+background:black;
+color:#00ff41;
+border:1px solid #00ff41;
+padding:10px;
+margin:5px;
+cursor:pointer;
+}
+
+button:hover{
+background:#00ff41;
+color:black;
+}
+</style>
+
+</head>
+
+<body>
+
+<canvas id="matrix"></canvas>
+
+<div class="container">
+
+<h2>CHAOS ENGINEERING TERMINAL</h2>
+
+<h3>Chaos Controls</h3>
+
+<button onclick="cpu()">HIGH CPU</button>
+<button onclick="memory()">MEMORY</button>
+<button onclick="slow()">SLOW</button>
+<button onclick="crash()">CRASH</button>
+
+</div>
+
+<script>
+
+const canvas=document.getElementById("matrix")
+const ctx=canvas.getContext("2d")
+
+canvas.width=window.innerWidth
+canvas.height=window.innerHeight
+
+const letters="01"
+const fontSize=16
+const columns=canvas.width/fontSize
+
+const drops=[]
+
+for(let i=0;i<columns;i++){
+drops[i]=1
+}
+
+function draw(){
+
+ctx.fillStyle="rgba(0,0,0,0.05)"
+ctx.fillRect(0,0,canvas.width,canvas.height)
+
+ctx.fillStyle="#00ff41"
+ctx.font=fontSize+"px monospace"
+
+for(let i=0;i<drops.length;i++){
+
+const text=letters[Math.floor(Math.random()*letters.length)]
+
+ctx.fillText(text,i*fontSize,drops[i]*fontSize)
+
+if(drops[i]*fontSize>canvas.height && Math.random()>0.975){
+drops[i]=0
+}
+
+drops[i]++
+
+}
+
+}
+
+setInterval(draw,35)
+
+function cpu(){
+fetch("/chaos/cpu",{method:"POST"})
+.then(r=>r.json())
+.then(d=>alert(d.message))
+}
+
+function memory(){
+fetch("/chaos/memory",{method:"POST"})
+.then(r=>r.json())
+.then(d=>alert(d.message))
+}
+
+function slow(){
+fetch("/chaos/slow",{method:"POST"})
+.then(r=>r.json())
+.then(d=>alert(d.message))
+}
+
+function crash(){
+fetch("/chaos/crash",{method:"POST"})
+.then(r=>r.json())
+.then(d=>alert(d.message))
+}
+
+</script>
+
+</body>
+</html>
