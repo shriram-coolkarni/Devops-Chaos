@@ -5,7 +5,8 @@ pipeline {
 
         stage('Clone Repo') {
             steps {
-                git 'https://github.com/shriram-coolkarni/Devops-Chaos.git'
+                git branch: 'main',
+                url: 'https://github.com/shriram-coolkarni/Devops-Chaos.git'
             }
         }
 
