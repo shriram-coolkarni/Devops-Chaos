@@ -15,10 +15,10 @@ pipeline {
         }
 
         stage('Build Docker Image') {
-            steps {
-                sh 'docker build -t $DOCKER_IMAGE .'
-            }
-        }
+    steps {
+        sh 'docker build -t shriram232622/chaos-app:latest .'
+    }
+}
 
         stage('Login to DockerHub') {
             steps {
@@ -36,10 +36,10 @@ pipeline {
         }
 
         stage('Push Image') {
-            steps {
-                sh 'docker push $DOCKER_IMAGE'
-            }
-        }
+    steps {
+        sh 'docker push shriram232622/chaos-app:latest'
+    }
+}
 
         stage('Deploy to App Server') {
             steps {
