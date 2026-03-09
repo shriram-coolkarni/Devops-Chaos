@@ -2,9 +2,9 @@ pipeline {
     agent any
 
     environment {
-        DOCKER_IMAGE = "yourdockerhubusername/chaos-app:latest"
-        APP_SERVER = "ubuntu@16.170.244.137"
-    }
+    DOCKER_IMAGE = "shriramcoolkarni/chaos-app:latest"
+    APP_SERVER = "ubuntu@16.170.244.137"
+}
 
     stages {
 
