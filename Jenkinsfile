@@ -2,7 +2,7 @@ pipeline {
     agent any
 
     environment {
-    DOCKER_IMAGE = "shriramcoolkarni/chaos-app:latest"
+    DOCKER_IMAGE = "shriram232622/chaos-app:latest"
     APP_SERVER = "ubuntu@16.170.244.137"
 }
 
