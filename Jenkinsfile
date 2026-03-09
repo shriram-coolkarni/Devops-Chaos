@@ -2,7 +2,8 @@ pipeline {
     agent any
 
     environment {
-        APP_SERVER="ubuntu@16.170.244.137"
+        DOCKER_IMAGE = "yourdockerhubusername/chaos-app:latest"
+        APP_SERVER = "ubuntu@16.170.244.137"
     }
 
     stages {
@@ -15,21 +16,42 @@ pipeline {
 
         stage('Build Docker Image') {
             steps {
-                sh 'docker build -t chaos-app:latest .'
+                sh 'docker build -t $DOCKER_IMAGE .'
+            }
+        }
+
+        stage('Login to DockerHub') {
+            steps {
+                withCredentials([usernamePassword(
+                    credentialsId: 'dockerhub-creds',
+                    usernameVariable: 'DOCKER_USER',
+                    passwordVariable: 'DOCKER_PASS'
+                )]) {
+
+                    sh '''
+                    echo $DOCKER_PASS | docker login -u $DOCKER_USER --password-stdin
+                    '''
+                }
+            }
+        }
+
+        stage('Push Image') {
+            steps {
+                sh 'docker push $DOCKER_IMAGE'
             }
         }
 
         stage('Deploy to App Server') {
-    steps {
-        sh '''
-        ssh -o StrictHostKeyChecking=no ubuntu@16.170.244.137 << EOF
-        docker stop chaos-container || true
-        docker rm chaos-container || true
-        docker run -d -p 3000:3000 --name chaos-container chaos-app:latest
-        EOF
-        '''
-    }
-  }
-
+            steps {
+                sh '''
+                ssh -o StrictHostKeyChecking=no $APP_SERVER << EOF
+                docker pull $DOCKER_IMAGE
+                docker stop chaos-container || true
+                docker rm chaos-container || true
+                docker run -d -p 3000:3000 --name chaos-container $DOCKER_IMAGE
+                EOF
+                '''
+            }
+        }
     }
 }
