@@ -42,16 +42,16 @@ pipeline {
 }
 
         stage('Deploy to App Server') {
-            steps {
-                sh '''
-                ssh -o StrictHostKeyChecking=no $APP_SERVER << EOF
-                docker pull $DOCKER_IMAGE
-                docker stop chaos-container || true
-                docker rm chaos-container || true
-                docker run -d -p 3000:3000 --name chaos-container $DOCKER_IMAGE
-                EOF
-                '''
-            }
-        }
+    steps {
+        sh '''
+        ssh -i /var/jenkins_home/app-server.pem -o StrictHostKeyChecking=no ubuntu@16.170.244.137 << EOF
+        docker pull shriram232622/chaos-app:latest
+        docker stop chaos-container || true
+        docker rm chaos-container || true
+        docker run -d -p 3000:3000 --name chaos-container shriram232622/chaos-app:latest
+        EOF
+        '''
+    }
+}
     }
 }
