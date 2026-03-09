@@ -49,7 +49,6 @@ pipeline {
         docker stop chaos-container || true
         docker rm chaos-container || true
         docker run -d -p 3000:3000 --name chaos-container shriram232622/chaos-app:latest
-        EOF
         '''
     }
 }
