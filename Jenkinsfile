@@ -20,17 +20,16 @@ pipeline {
         }
 
         stage('Deploy to App Server') {
-            steps {
-                sh '''
-                ssh $APP_SERVER << EOF
-                docker stop chaos-container || true
-                docker rm chaos-container || true
-                docker pull node:18 >/dev/null 2>&1 || true
-                docker run -d -p 3000:3000 --name chaos-container chaos-app:latest
-                EOF
-                '''
-            }
-        }
+    steps {
+        sh '''
+        ssh -o StrictHostKeyChecking=no ubuntu@16.170.244.137 << EOF
+        docker stop chaos-container || true
+        docker rm chaos-container || true
+        docker run -d -p 3000:3000 --name chaos-container chaos-app:latest
+        EOF
+        '''
+    }
+  }
 
     }
 }
